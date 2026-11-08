@@ -1,6 +1,6 @@
  <div align="center">
 
-# ✦ Marsel Prism
+# ✦ Marsel Glass
 
 **Your browser, your canvas.**
 
