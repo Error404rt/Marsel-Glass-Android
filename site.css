@@ -1,0 +1,35 @@
+html[data-maarrsel]{background:var(--maarrsel-bg)!important}
+html[data-maarrsel] body{background:transparent!important;isolation:isolate}
+html[data-maarrsel] #maarrsel-wall-layer{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;object-fit:cover!important;pointer-events:none!important;z-index:-1!important}
+html[data-maarrsel="generic"] body{color:#f8f7ff}
+html[data-maarrsel="generic"] :is(main,[role="main"]){background:transparent!important}
+html[data-maarrsel] :is(body>header,body>nav,body>aside,main>article,[role="alert"],[role="dialog"]),
+html[data-maarrsel="youtube"] :is(#masthead-container,ytd-guide-renderer,ytd-mini-guide-renderer,ytd-comment-thread-renderer,#description,ytd-rich-grid-media),
+html[data-maarrsel="github"] :is(.AppHeader,.Box,.flash,[class*="PageHeader"]){
+  background:color-mix(in srgb,var(--maarrsel-tint) var(--maarrsel-shade),transparent)!important;
+  backdrop-filter:blur(var(--maarrsel-blur))!important;
+  color:#f8f7ff!important;
+}
+html[data-maarrsel="youtube"] :is(ytd-app,#content,ytd-page-manager,ytd-browse,ytd-watch-flexy,#background),
+html[data-maarrsel="github"] :is(.application-main,.Layout-main,main,.AppHeader-localBar,.AppHeader-globalBar){
+  background:transparent!important;
+}
+html[data-maarrsel="youtube"] ytd-app{
+  --yt-spec-text-primary:#f8f7ff!important;
+  --yt-spec-text-secondary:#ddd9eb!important;
+}
+html[data-maarrsel="github"] body{
+  --fgColor-default:#f8f7ff!important;
+  --fgColor-muted:#ddd9eb!important;
+  --color-fg-default:#f8f7ff!important;
+  --color-fg-muted:#ddd9eb!important;
+  color:#f8f7ff!important;
+}
+html[data-maarrsel="soundcloud"] :is(.header,.header__inner,.header__navMenu,.header__navMenu>li,.header__right,.header__middle,.header__navMenu a,.header__logo){
+  background-color:transparent!important;
+}
+html[data-maarrsel="soundcloud"] .header{
+  background:color-mix(in srgb,var(--maarrsel-tint) var(--maarrsel-shade),transparent)!important;
+  backdrop-filter:blur(var(--maarrsel-blur))!important;
+}
+html[data-maarrsel] #maarrsel-wall-layer{filter:blur(var(--maarrsel-wall-blur,0px))!important;inset:calc(-2 * var(--maarrsel-wall-blur,0px))!important;width:calc(100vw + 4 * var(--maarrsel-wall-blur,0px))!important;height:calc(100vh + 4 * var(--maarrsel-wall-blur,0px))!important}
