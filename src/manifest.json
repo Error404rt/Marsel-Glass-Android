@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Maarrsel Glass",
   "short_name": "Maarrsel",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A customizable new tab with wallpaper, glass effects and quick links. Adapted for Firefox on Android.",
   "homepage_url": "https://github.com/Error404rt/Marsel-Glass-Android",
   "icons": {
