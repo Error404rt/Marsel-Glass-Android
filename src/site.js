@@ -28,10 +28,12 @@
     const wallBlur = coarse ? Math.min(24, theme.wallpaperBlur ?? 0) : theme.wallpaperBlur ?? 0;
     root.style.setProperty('--maarrsel-wall-blur', wallBlur + 'px');
     const host = location.hostname;
-    root.dataset.maarrsel = /(^|\.)youtube\.com$/.test(host)
-      ? (document.querySelector('ytm-app') ? 'youtube-mobile' : 'youtube')
-      : host === 'github.com' ? 'github'
-      : /(^|\.)soundcloud\.com$/.test(host) ? 'soundcloud' : 'generic';
+    root.dataset.maarrsel = /(^|\\.)yandex\\.(kz|ru|com|by|uz|com\\.tr)$/.test(host)
+      ? 'yandex'
+      : /(^|\\.)youtube\\.com$/.test(host)
+        ? (document.querySelector('ytm-app') ? 'youtube-mobile' : 'youtube')
+        : host === 'github.com' ? 'github'
+        : /(^|\\.)soundcloud\\.com$/.test(host) ? 'soundcloud' : 'generic';
     canvas.remove();
     if (!wallpaper?.image) return;
     const bytes = Uint8Array.from(atob(wallpaper.image.split(',')[1]), char => char.charCodeAt(0));
