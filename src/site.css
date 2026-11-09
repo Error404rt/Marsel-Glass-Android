@@ -38,4 +38,22 @@ html[data-maarrsel="soundcloud"] .header{
   background:color-mix(in srgb,var(--maarrsel-tint) var(--maarrsel-shade),transparent)!important;
   backdrop-filter:blur(var(--maarrsel-blur))!important;
 }
+html[data-maarrsel="yandex"] body{color:#f8f7ff!important}
+html[data-maarrsel="yandex"] body>:not(#maarrsel-wall-layer){
+  background-color:transparent!important;
+}
+html[data-maarrsel="yandex"] :is(#main,#content,.main,.main__content,.serp-list,.serp-list-left,.serp-list-right,.serp-header,.serp-list__items,[role="main"],main,section){
+  background:transparent!important;
+}
+html[data-maarrsel="yandex"] :is(.serp-item,.serp-item__card,.Organic,.organic,.Card,.search2__form,.search2__input,.Header,.header,.Related,.RelatedTiles){
+  background:color-mix(in srgb,var(--maarrsel-tint) var(--maarrsel-shade),transparent)!important;
+  -webkit-backdrop-filter:blur(var(--maarrsel-blur))!important;
+  backdrop-filter:blur(var(--maarrsel-blur))!important;
+  border-color:color-mix(in srgb,#fff 16%,transparent)!important;
+  color:#f8f7ff!important;
+}
+html[data-maarrsel="yandex"] :is(.serp-item,.Organic,.organic,.Card) :is(p,span,a,h1,h2,h3,h4,li){
+  color:inherit;
+}
+html[data-maarrsel="yandex"] a{color:#c7b5ff}
 html[data-maarrsel] #maarrsel-wall-layer{filter:blur(var(--maarrsel-wall-blur,0px))!important;inset:calc(-2 * var(--maarrsel-wall-blur,0px))!important;width:calc(100vw + 4 * var(--maarrsel-wall-blur,0px))!important;height:calc(100vh + 4 * var(--maarrsel-wall-blur,0px))!important}
