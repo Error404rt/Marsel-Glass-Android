@@ -57,8 +57,9 @@ jobs:
             --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
       - name: Warn about missing signing secrets
         if: env.AMO_JWT_ISSUER == '' || env.AMO_JWT_SECRET == ''
-        run: echo "::warning::AMO_JWT_ISSUER/AMO_JWT_SECRET are not set. Publishing an unsigned build only."
+        run: echo "::warning::AMO_JWT_ISSUER/AMO_JWT_SECRET are not set. Release publication is skipped; unsigned XPI will not be published."
       - name: Publish release
+        if: env.AMO_JWT_ISSUER != '' && env.AMO_JWT_SECRET != ''
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
