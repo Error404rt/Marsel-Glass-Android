@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "Maarrsel Glass",
+  "short_name": "Maarrsel",
+  "version": "1.5.0",
+  "description": "A customizable new tab with wallpaper, glass effects and quick links. Adapted for Firefox on Android.",
+  "homepage_url": "https://github.com/Error404rt/Marsel-Glass-Android",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "marsel-glass-android@error404rt.github.io",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Maarrsel Glass",
+    "default_icon": {
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
+    }
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "optional_permissions": [
+    "tabs"
+  ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "service_worker": "background.js"
+  }
+}

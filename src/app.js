@@ -1,10 +1,12 @@
 (async () => {
+const api = globalThis.browser ?? globalThis.chrome;
+const isAndroid = /Android/i.test(navigator.userAgent);
 const { locale, t } = await localize();
 const languagePicker = document.getElementById('language');
 languagePicker.value = locale;
 languagePicker.onchange = async () => {
   try {
-    await chrome.storage.local.set({ language: languagePicker.value });
+    await api.storage.local.set({ language: languagePicker.value });
     location.reload();
   } catch {
     languagePicker.value = locale;
@@ -33,6 +35,7 @@ const fields = [
 let theme = { ...defaults };
 let links = [{ title: 'YouTube', url: 'https://www.youtube.com/' }, { title: 'GitHub', url: 'https://github.com/' }];
 let wallpaper = null;
+let replaceNewTab = false;
 let activeIndex = -1;
 let pending = {};
 let saving = false;
@@ -44,7 +47,7 @@ async function save(patch) {
     const batch = pending;
     pending = {};
     try {
-      await chrome.storage.local.set(batch);
+      await api.storage.local.set(batch);
       get('status').textContent = '';
     } catch {
       get('status').textContent = t('Не удалось сохранить изменения.');
@@ -129,7 +132,11 @@ function moveLink(from, to) {
   links = reordered;
   renderLinks();
   save({ links });
-  get('links').children[to].querySelector('.grip').focus();
+  const tile = get('links').children[to];
+  const focusTarget = matchMedia('(pointer: coarse)').matches
+    ? [...tile.querySelectorAll('.move')].find(button => !button.disabled)
+    : tile.querySelector('.grip');
+  focusTarget?.focus();
 }
 let draggedLink = null;
 function renderLinks() {
@@ -162,6 +169,21 @@ function renderLinks() {
       event.preventDefault();
       moveLink(index, index + direction);
     };
+    const moves = document.createElement('span');
+    moves.className = 'moves';
+    const left = document.createElement('button');
+    left.className = 'move';
+    left.textContent = '←';
+    left.disabled = index === 0;
+    left.setAttribute('aria-label', t('Переместить влево') + ' «' + title + '»');
+    left.addEventListener('click', () => moveLink(index, index - 1));
+    const right = document.createElement('button');
+    right.className = 'move';
+    right.textContent = '→';
+    right.disabled = index === links.length - 1;
+    right.setAttribute('aria-label', t('Переместить вправо') + ' «' + title + '»');
+    right.addEventListener('click', () => moveLink(index, index + 1));
+    moves.append(left, right);
     tile.ondragover = event => {
       if (draggedLink === null) return;
       event.preventDefault();
@@ -174,7 +196,7 @@ function renderLinks() {
       draggedLink = null;
       moveLink(from, index);
     };
-    tile.append(grip, anchor, edit);
+    tile.append(grip, anchor, edit, moves);
     get('links').append(tile);
   });
 }
@@ -268,7 +290,8 @@ async function setWallpaper(file) {
     image.src = objectUrl;
     await image.decode();
     const canvas = document.createElement('canvas');
-    const scale = Math.min(1, 2560 / Math.max(image.naturalWidth, image.naturalHeight));
+    const maxSide = isAndroid ? 1920 : 2560;
+    const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
     canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
     canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
     const context = canvas.getContext('2d', { alpha: false });
@@ -299,22 +322,54 @@ async function setWallpaper(file) {
     input.disabled = false;
   }
 }
+get('replace-newtab').onchange = async event => {
+  const checkbox = event.target;
+  const status = get('status');
+  status.textContent = '';
+  if (checkbox.checked) {
+    try {
+      const granted = await api.permissions.request({ permissions: ['tabs'] });
+      if (!granted) {
+        checkbox.checked = false;
+        status.textContent = t('Нужно разрешение на доступ к вкладкам.');
+        return;
+      }
+      replaceNewTab = true;
+      await api.storage.local.set({ replaceNewTab: true });
+    } catch {
+      checkbox.checked = false;
+      status.textContent = t('Не удалось включить открытие на новых вкладках.');
+    }
+  } else {
+    replaceNewTab = false;
+    try {
+      await api.storage.local.set({ replaceNewTab: false });
+      await api.permissions.remove({ permissions: ['tabs'] }).catch(() => {});
+    } catch {
+      status.textContent = t('Не удалось сохранить изменения.');
+    }
+  }
+};
 async function start() {
   try {
-    const stored = await chrome.storage.local.get(['theme', 'links', 'wallpaper']);
+    const stored = await api.storage.local.get(['theme', 'links', 'wallpaper', 'replaceNewTab']);
     theme = { ...defaults, ...stored.theme };
     links = stored.links ?? links;
     wallpaper = stored.wallpaper ?? null;
+    replaceNewTab = Boolean(stored.replaceNewTab);
   } catch {
     get('status').textContent = t('Не удалось загрузить настройки.');
   }
   apply();
   renderLinks();
+  if (isAndroid) {
+    get('wall-paste').hidden = true;
+    get('newtab-title').hidden = false;
+    get('newtab-row').hidden = false;
+    const allowed = await api.permissions.contains({ permissions: ['tabs'] }).catch(() => false);
+    get('replace-newtab').checked = replaceNewTab && allowed;
+  }
 }
 start();
 
-
-
-
 })();
-

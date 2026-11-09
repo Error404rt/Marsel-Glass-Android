@@ -5,16 +5,22 @@ html[data-maarrsel="generic"] body{color:#f8f7ff}
 html[data-maarrsel="generic"] :is(main,[role="main"]){background:transparent!important}
 html[data-maarrsel] :is(body>header,body>nav,body>aside,main>article,[role="alert"],[role="dialog"]),
 html[data-maarrsel="youtube"] :is(#masthead-container,ytd-guide-renderer,ytd-mini-guide-renderer,ytd-comment-thread-renderer,#description,ytd-rich-grid-media),
+html[data-maarrsel="youtube-mobile"] :is(ytm-header-bar,ytm-pivot-bar-renderer,ytm-slim-video-metadata-section-renderer,ytm-comment-section-renderer),
 html[data-maarrsel="github"] :is(.AppHeader,.Box,.flash,[class*="PageHeader"]){
   background:color-mix(in srgb,var(--maarrsel-tint) var(--maarrsel-shade),transparent)!important;
   backdrop-filter:blur(var(--maarrsel-blur))!important;
   color:#f8f7ff!important;
 }
 html[data-maarrsel="youtube"] :is(ytd-app,#content,ytd-page-manager,ytd-browse,ytd-watch-flexy,#background),
+html[data-maarrsel="youtube-mobile"] :is(ytm-app,ytm-browse,ytm-watch,#content),
 html[data-maarrsel="github"] :is(.application-main,.Layout-main,main,.AppHeader-localBar,.AppHeader-globalBar){
   background:transparent!important;
 }
 html[data-maarrsel="youtube"] ytd-app{
+  --yt-spec-text-primary:#f8f7ff!important;
+  --yt-spec-text-secondary:#ddd9eb!important;
+}
+html[data-maarrsel="youtube-mobile"] ytm-app{
   --yt-spec-text-primary:#f8f7ff!important;
   --yt-spec-text-secondary:#ddd9eb!important;
 }

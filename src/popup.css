@@ -1,0 +1,9 @@
+*{box-sizing:border-box}
+body{color-scheme:dark;background:#171622;color:#f7f4ff;font:14px system-ui;width:288px;margin:0;padding:16px}
+strong{font-size:19px}
+#host{overflow-wrap:anywhere;color:#c7bddd;margin:5px 0 12px}
+button{width:100%;background:#352752;color:white;border:1px solid #9577cb;border-radius:10px;padding:11px;cursor:pointer;font:inherit}
+button:disabled{opacity:.55;cursor:default}
+#open-dashboard{background:linear-gradient(135deg,#6d4cae,#9577cb);border-color:#c7a5ff;font-weight:600;margin-bottom:8px}
+p{margin:8px 0 0;color:#d9d2ea;font-size:13px}
+#global{margin-top:8px}

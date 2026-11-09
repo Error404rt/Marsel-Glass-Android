@@ -1,0 +1,19 @@
+{
+  "name": "marsel-glass-android",
+  "version": "1.5.0",
+  "private": true,
+  "description": "Maarrsel Glass adapted for Firefox on Android",
+  "scripts": {
+    "lint": "web-ext lint --source-dir src",
+    "build": "web-ext build --source-dir src --artifacts-dir dist --overwrite-dest",
+    "start": "web-ext run --source-dir src",
+    "start:android": "web-ext run --source-dir src --target firefox-android",
+    "sign": "web-ext sign --source-dir src --artifacts-dir dist --channel unlisted"
+  },
+  "devDependencies": {
+    "web-ext": "^10.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

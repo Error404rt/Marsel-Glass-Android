@@ -1,11 +1,20 @@
 (async () => {
+const api = globalThis.browser ?? globalThis.chrome;
 const { t } = await localize();
 const button = document.getElementById('toggle');
 const note = document.getElementById('note');
+const dashboard = document.getElementById('open-dashboard');
+
+dashboard.onclick = () => {
+  api.tabs.create({ url: api.runtime.getURL('index.html') }).catch(() => {
+    note.textContent = t('Не удалось открыть Maarrsel.');
+  });
+};
+
 async function start() {
   const globalButton = document.getElementById('global');
   const allSites = ['http://*/*', 'https://*/*'];
-  let globalMode = Boolean((await chrome.storage.local.get('allSites')).allSites);
+  let globalMode = Boolean((await api.storage.local.get('allSites')).allSites);
   function renderGlobal() {
     globalButton.textContent = globalMode ? t('Выключить на всех сайтах') : t('Включить на всех сайтах');
     globalButton.disabled = false;
@@ -16,17 +25,24 @@ async function start() {
     note.textContent = '';
     try {
       if (globalMode) {
-        await chrome.storage.local.set({ allSites: false });
-        await chrome.scripting.unregisterContentScripts({ ids: ['all-sites'] }).catch(() => {});
+        await api.storage.local.set({ allSites: false });
+        await api.scripting.unregisterContentScripts({ ids: ['all-sites'] }).catch(() => {});
       } else {
-        if (!await chrome.permissions.request({ origins: allSites })) {
+        if (!await api.permissions.request({ origins: allSites })) {
           note.textContent = t('Нужно разрешение на оформление сайтов.');
           return;
         }
-        if (!(await chrome.scripting.getRegisteredContentScripts({ ids: ['all-sites'] })).length) {
-          await chrome.scripting.registerContentScripts([{ id: 'all-sites', matches: allSites, js: ['site.js'], css: ['site.css'] }]);
+        const existing = await api.scripting.getRegisteredContentScripts({ ids: ['all-sites'] }).catch(() => []);
+        if (!existing.length) {
+          await api.scripting.registerContentScripts([{
+            id: 'all-sites',
+            matches: allSites,
+            js: ['site.js'],
+            css: ['site.css'],
+            persistAcrossSessions: true
+          }]);
         }
-        await chrome.storage.local.set({ allSites: true });
+        await api.storage.local.set({ allSites: true });
       }
       globalMode = !globalMode;
       location.reload();
@@ -36,8 +52,8 @@ async function start() {
       renderGlobal();
     }
   };
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const url = new URL(tab.url ?? 'about:blank');
+  const [tab] = await api.tabs.query({ active: true, currentWindow: true });
+  const url = new URL(tab?.url ?? 'about:blank');
   if (!['http:', 'https:'].includes(url.protocol)) {
     note.textContent = t('Доступно на обычных сайтах.');
     return;
@@ -46,12 +62,12 @@ async function start() {
   const match = url.protocol + '//' + url.hostname + '/*';
   const id = 'site-' + Array.from(match, char => char.charCodeAt(0).toString(16)).join('');
   const key = 'maarrsel:' + match;
-  const preference = (await chrome.storage.local.get(key))[key];
+  const preference = (await api.storage.local.get(key))[key];
   let enabled = preference ?? globalMode;
   async function applyToTab() {
     try {
-      await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['site.css'] });
-      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['site.js'] });
+      await api.scripting.insertCSS({ target: { tabId: tab.id }, files: ['site.css'] });
+      await api.scripting.executeScript({ target: { tabId: tab.id }, files: ['site.js'] });
     } catch {
       note.textContent = t('Обнови страницу. На защищённых страницах оформление недоступно.');
     }
@@ -67,19 +83,25 @@ async function start() {
     note.textContent = '';
     try {
       if (enabled) {
-        await chrome.storage.local.set({ [key]: false });
-        await chrome.scripting.unregisterContentScripts({ ids: [id] }).catch(() => {});
+        await api.storage.local.set({ [key]: false });
+        await api.scripting.unregisterContentScripts({ ids: [id] }).catch(() => {});
         enabled = false;
       } else {
-        if (!await chrome.permissions.request({ origins: [match] })) {
-          note.textContent = t('Brave не получил разрешение на этот сайт.');
+        if (!await api.permissions.request({ origins: [match] })) {
+          note.textContent = t('Браузер не получил разрешение на этот сайт.');
           return;
         }
-        const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: [id] });
+        const scripts = await api.scripting.getRegisteredContentScripts({ ids: [id] });
         if (!scripts.length) {
-          await chrome.scripting.registerContentScripts([{ id, matches: [match], js: ['site.js'], css: ['site.css'] }]);
+          await api.scripting.registerContentScripts([{
+            id,
+            matches: [match],
+            js: ['site.js'],
+            css: ['site.css'],
+            persistAcrossSessions: true
+          }]);
         }
-        await chrome.storage.local.set({ [key]: true });
+        await api.storage.local.set({ [key]: true });
         enabled = true;
         await applyToTab();
       }
@@ -91,6 +113,5 @@ async function start() {
   };
 }
 start().catch(() => { note.textContent = t('Не удалось открыть настройки сайта.'); });
-
 
 })();
