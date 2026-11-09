@@ -1,6 +1,6 @@
 {
   "name": "marsel-glass-android",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
   "description": "Maarrsel Glass adapted for Firefox on Android",
   "scripts": {
